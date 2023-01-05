@@ -1,57 +1,33 @@
-# Wolf-Sheep Predation Model
+# Modelo de Predação Wolf-Sheep, com canibalismo
 
-## Summary
+## Resumo
 
-A simple ecological model, consisting of three agent types: wolves, sheep, and grass. The wolves and the sheep wander around the grid at random. Wolves and sheep both expend energy moving around, and replenish it by eating. Sheep eat grass, and wolves eat sheep if they end up on the same grid cell.
+O modelo é uma adaptação do exemplo Wolf-Sheep oferecido pelo framework Mesa. Ao modelo, foi adicionado a possibilidade de lobos poderem canibalizar outros lobos em situações de fome.
 
-If wolves and sheep have enough energy, they reproduce, creating a new wolf or sheep (in this simplified model, only one parent is needed for reproduction). The grass on each cell regrows at a constant rate. If any wolves and sheep run out of energy, they die.
+## Hipótese causal
 
-The model is tests and demonstrates several Mesa concepts and features:
- - MultiGrid
- - Multiple agent types (wolves, sheep, grass)
- - Overlay arbitrary text (wolf's energy) on agent's shapes while drawing on CanvasGrid
- - Agents inheriting a behavior (random movement) from an abstract parent
- - Writing a model composed of multiple files.
- - Dynamically adding and removing agents from the schedule
+O intuito dessa alteração é estudar os efeitos do canibalismo em um sistema predatório. A hipótese guiadora do trabalho é que a existência de canibalismo pode ser benéfica para a espécie, até sendo capaz de prevenir sua extinção em cenários extremos de fome.
 
-## Installation
+## Como usar o simulador
 
-To install the dependencies use pip and the requirements.txt in this directory. e.g.
+Para utilizar o simulador, instalar o módulo Mesa para Python, acessar o diretório principal do projeto, e executar o comando "mesa runserver". Uma janela do navegador será aberta, na qual uma interface gráfica permite o controle de parâmetros da simulação.
 
-```
-    # First, we clone the Mesa repo
-    $ git clone https://github.com/projectmesa/mesa.git
-    $ cd mesa
-    # Then we cd to the example directory
-    $ cd examples/wolf_sheep
-    $ pip install -r requirements.txt
-```
+## Variáveis da simulação
 
-## How to Run
+- Variáveis Independentes
+Grass: Grama. Presença ou não de grama na simulação. Caso não, as ovelhas não se alimentam de grama e nunca perdem energia.
+Grass Regrowth Rate: Taxa de regeneração da grama. Quantos passos até um espaço com grama amadurecer a ponto de ser consumível por ovelhas.
+Initial Sheep Population: População inicial de ovelhas
+Sheep Reproduction Rate: Taxa de reprodução de ovelhas: Representa a chance de uma ovelha reproduzir-se a cada passo
+Initial Wolf Population: População inicial de lobos
+Wolf Reproduction Rate: Taxa de reprodução de lobos: Representa a chance de um lobo reproduzir-se a cada passo
+Wolf Gain From Food: Ganho de energia de um lobo quando se alimenta de uma ovelha.
+Sheep Gain From Food: Ganho de energia de uma ovelha quando se alimenta de grama.
+Cannibalism Threshold: Nível de energia abaixo do qual lobos passam a considerar canibalismo.
+Wolf Gain From Cannibalism: Ganho de energia de um lobo quando se alimenta de outro lobo.
 
-To run the model interactively, run ``mesa runserver`` in this directory. e.g.
-
-```
-    $ mesa runserver
-```
-
-Then open your browser to [http://127.0.0.1:8521/](http://127.0.0.1:8521/) and press Reset, then Run.
-
-## Files
-
-* ``wolf_sheep/random_walk.py``: This defines the ``RandomWalker`` agent, which implements the behavior of moving randomly across a grid, one cell at a time. Both the Wolf and Sheep agents will inherit from it.
-* ``wolf_sheep/test_random_walk.py``: Defines a simple model and a text-only visualization intended to make sure the RandomWalk class was working as expected. This doesn't actually model anything, but serves as an ad-hoc unit test. To run it, ``cd`` into the ``wolf_sheep`` directory and run ``python test_random_walk.py``. You'll see a series of ASCII grids, one per model step, with each cell showing a count of the number of agents in it.
-* ``wolf_sheep/agents.py``: Defines the Wolf, Sheep, and GrassPatch agent classes.
-* ``wolf_sheep/scheduler.py``: Defines a custom variant on the RandomActivationByType scheduler, where we can define filters for the `get_type_count` function.
-* ``wolf_sheep/model.py``: Defines the Wolf-Sheep Predation model itself
-* ``wolf_sheep/server.py``: Sets up the interactive visualization server
-* ``run.py``: Launches a model visualization server.
-
-## Further Reading
-
-This model is closely based on the NetLogo Wolf-Sheep Predation Model:
-
-Wilensky, U. (1997). NetLogo Wolf Sheep Predation model. http://ccl.northwestern.edu/netlogo/models/WolfSheepPredation. Center for Connected Learning and Computer-Based Modeling, Northwestern University, Evanston, IL.
-
-See also the [Lotka–Volterra equations
-](https://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equations) for an example of a classic differential-equation model with similar dynamics.
+- Variáveis Dependentes
+Wolves: Quantidade lobos vivos.
+Sheep: Quantidade ovelhas vivas.
+Grass: Quantidade de espaços com grama madura.
+Cannibalism Occurrences: Número de vezes que houve canibalismo.
