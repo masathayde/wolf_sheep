@@ -44,6 +44,7 @@ chart_element = mesa.visualization.ChartModule(
         {"Label": "Wolves", "Color": "#AA0000"},
         {"Label": "Sheep", "Color": "#666666"},
         {"Label": "Grass", "Color": "#00AA00"},
+        {"Label": "Cannibalism Occurrences", "Color": "#000000"},
     ]
 )
 
@@ -71,6 +72,9 @@ model_params = {
         "Wolf Gain From Food Rate", 20, 1, 50
     ),
     "sheep_gain_from_food": mesa.visualization.Slider("Sheep Gain From Food", 4, 1, 10),
+    "cannibalism_threshold": mesa.visualization.Slider("Cannibalism Threshold", -1, -1, 40),
+    "wolf_gain_from_cannibalism": mesa.visualization.Slider("Wolf Gain From Cannibalism", 10, 1, 50),
+
 }
 
 server = mesa.visualization.ModularServer(

@@ -53,6 +53,8 @@ class WolfSheep(mesa.Model):
         grass=False,
         grass_regrowth_time=30,
         sheep_gain_from_food=4,
+        cannibalism_threshold=-1,
+        wolf_gain_from_cannibalism=10,
     ):
         """
         Create a new Wolf-Sheep model with the given parameters.
@@ -81,6 +83,14 @@ class WolfSheep(mesa.Model):
         self.grass_regrowth_time = grass_regrowth_time
         self.sheep_gain_from_food = sheep_gain_from_food
 
+        # Nível de energia para ativar canibalismo.
+        self.cannibalism_threshold = cannibalism_threshold
+        self.wolf_gain_from_cannibalism = wolf_gain_from_cannibalism
+
+        # Lista de lobos canibalizados a ser removida após um passo da simulação
+        self.wolves_eaten_by_wolves = []
+        self.cannibalism_occurrence = 0
+
         self.schedule = RandomActivationByTypeFiltered(self)
         self.grid = mesa.space.MultiGrid(self.width, self.height, torus=True)
         self.datacollector = mesa.DataCollector(
@@ -90,6 +100,7 @@ class WolfSheep(mesa.Model):
                 "Grass": lambda m: m.schedule.get_type_count(
                     GrassPatch, lambda x: x.fully_grown
                 ),
+                "Cannibalism Occurrences": lambda m: m.cannibalism_occurrence,
             }
         )
 
@@ -131,6 +142,14 @@ class WolfSheep(mesa.Model):
 
     def step(self):
         self.schedule.step()
+
+        # Remoção de lobos canibalizados
+        for wolf in self.wolves_eaten_by_wolves:
+            self.grid.remove_agent(wolf)
+            self.schedule.remove(wolf)
+            self.cannibalism_occurrence += 1
+        self.wolves_eaten_by_wolves = []
+
         # collect data
         self.datacollector.collect(self)
         if self.verbose:

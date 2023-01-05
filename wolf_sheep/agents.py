@@ -60,8 +60,13 @@ class Wolf(RandomWalker):
     def __init__(self, unique_id, pos, model, moore, energy=None):
         super().__init__(unique_id, pos, model, moore=moore)
         self.energy = energy
+        self.alive = True
 
     def step(self):
+        # Caso o lobo já tenha sido morto por outro lado. Nada é feito.
+        if not self.alive:
+            return
+
         self.random_move()
         self.energy -= 1
 
@@ -76,6 +81,18 @@ class Wolf(RandomWalker):
             # Kill the sheep
             self.model.grid.remove_agent(sheep_to_eat)
             self.model.schedule.remove(sheep_to_eat)
+        # Calso não haja ovelhas e nível de energia esteja baixo, poderá haver canibalismo
+        elif self.energy <= self.model.cannibalism_threshold:
+            wolves = [obj for obj in this_cell if isinstance(obj, Wolf)]
+            for wolf in wolves:
+                # Lobo não pode comer a si mesmo, nem pode comer um que tenha mais energia.
+                if id(self) != id(wolf) and wolf.alive and self.energy >= wolf.energy:
+                    self.energy += self.model.wolf_gain_from_cannibalism
+                    wolf.alive = False
+                    # Programar a remoção do lobo que foi comido
+                    self.model.wolves_eaten_by_wolves.append(wolf)
+                    break
+
 
         # Death or reproduction
         if self.energy < 0:
