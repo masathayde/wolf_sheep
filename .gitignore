@@ -1,0 +1,6 @@
+.RData
+.RHistory
+*.csv
+*.png
+*~lock.*
+wolf_sheep/__pycache__/

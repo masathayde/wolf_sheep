@@ -91,6 +91,9 @@ class WolfSheep(mesa.Model):
         self.wolves_eaten_by_wolves = []
         self.cannibalism_occurrence = 0
 
+        # Variável que monitoram o estado dos lobos.
+        self.steps_before_wolf_extinction = 0
+
         self.schedule = RandomActivationByTypeFiltered(self)
         self.grid = mesa.space.MultiGrid(self.width, self.height, torus=True)
         self.datacollector = mesa.DataCollector(
@@ -101,6 +104,7 @@ class WolfSheep(mesa.Model):
                     GrassPatch, lambda x: x.fully_grown
                 ),
                 "Cannibalism Occurrences": lambda m: m.cannibalism_occurrence,
+                "Steps till Wolf Extinction": lambda m: m.steps_before_wolf_extinction
             }
         )
 
@@ -149,6 +153,9 @@ class WolfSheep(mesa.Model):
             self.schedule.remove(wolf)
             self.cannibalism_occurrence += 1
         self.wolves_eaten_by_wolves = []
+
+        if (self.schedule.get_type_count(Wolf) != 0):
+            self.steps_before_wolf_extinction += 1
 
         # collect data
         self.datacollector.collect(self)
